@@ -1,4 +1,5 @@
 using API_Valorant_NET.Data;
+using API_Valorant_NET.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,24 +24,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/agents/", async (Agents agent, ValorantDB db) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    db.Agents.Add(agent);
+    await db.SaveChangesAsync();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    return Results.Created($"/agents/{agent.ID}", agent);
+});
+
 
 app.Run();
 
