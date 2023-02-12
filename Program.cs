@@ -1,6 +1,7 @@
 using API_Valorant_NET.Data;
 using API_Valorant_NET.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,13 @@ app.MapPost("/agents/", async (Agents agent, ValorantDB db) =>
 });
 
 app.MapGet("/agents/", async (ValorantDB db) => await db.Agents.ToListAsync());
+
+app.MapGet("/agents/{id:int}", async (int id, ValorantDB db) => {
+    return await db.Agents.FindAsync(id)
+      is Agents e
+      ? Results.Ok(e)
+      : Results.NotFound();
+});
 
 
 app.Run();
