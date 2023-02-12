@@ -32,6 +32,8 @@ app.MapPost("/agents/", async (Agents agent, ValorantDB db) =>
     return Results.Created($"/agents/{agent.ID}", agent);
 });
 
+app.MapGet("/agents/", async (ValorantDB db) => await db.Agents.ToListAsync());
+
 
 app.Run();
 
